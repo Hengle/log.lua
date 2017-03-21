@@ -90,20 +90,28 @@ for i, x in ipairs(modes) do
   end
 end
 
-function log:new(file_name)
+-- create
+--@param file_name log's file path
+--@param usecolor  Is use color
+--@param showdate Is show date
+--@return log's object
+function log:new(file_name, usecolor, showdate)
 	local o = {}
 	setmetatable(o, self)
 	self.__index = self
 	
-	o.outfile = file_name
-	
-	if o.outfile then
+	if file_name then
+		o.outfile = file_name
 		o.fp = io.open(o.outfile, "w+")
 	end
+	
+	if not (usecolor == nil) then o.usecolor = usecolor end
+	if not (showdate == nil) then o.showdate = showdate end
 	
 	return o
 end
 
+-- close
 function log:close()
 	if self.fp then
 		self.fp:close()
