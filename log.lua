@@ -6,13 +6,15 @@
 -- This library is free software; you can redistribute it and/or modify it
 -- under the terms of the MIT license. See LICENSE for details.
 --
+-- Modify by ZhangMinglin 2017/03/21
 
 local log = { _version = "0.1.0" }
 
 log.usecolor = true
+log.showdate = true
 log.outfile = nil
 log.level = "trace"
-
+log.fp = nil
 
 local modes = {
   { name = "trace", color = "\27[34m", },
@@ -54,37 +56,58 @@ end
 
 for i, x in ipairs(modes) do
   local nameupper = x.name:upper()
-  log[x.name] = function(...)
+  log[x.name] = function(self, ...)
     
     -- Return early if we're below the log level
-    if i < levels[log.level] then
+    if i < levels[self.level] then
       return
     end
 
     local msg = tostring(...)
     local info = debug.getinfo(2, "Sl")
     local lineinfo = info.short_src .. ":" .. info.currentline
-
+	
     -- Output to console
     print(string.format("%s[%-6s%s]%s %s: %s",
-                        log.usecolor and x.color or "",
+                        self.usecolor and x.color or "",
                         nameupper,
-                        os.date("%H:%M:%S"),
-                        log.usecolor and "\27[0m" or "",
+                        self.showdate and os.date("%H:%M:%S") or "",
+                        self.usecolor and "\27[0m" or "",
                         lineinfo,
                         msg))
 
     -- Output to log file
-    if log.outfile then
-      local fp = io.open(log.outfile, "a")
+    if self.fp then
       local str = string.format("[%-6s%s] %s: %s\n",
-                                nameupper, os.date(), lineinfo, msg)
-      fp:write(str)
-      fp:close()
+                                nameupper,
+								self.showdate and os.date("%H:%M:%S") or "",
+								lineinfo,
+								 msg)
+      self.fp:write(str)
+	  self.fp:flush()
     end
 
   end
 end
 
+function log:new(file_name)
+	local o = {}
+	setmetatable(o, self)
+	self.__index = self
+	
+	o.outfile = file_name
+	
+	if o.outfile then
+		o.fp = io.open(o.outfile, "w+")
+	end
+	
+	return o
+end
+
+function log:close()
+	if self.fp then
+		self.fp:close()
+	end
+end
 
 return log
