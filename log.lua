@@ -13,16 +13,16 @@ local log = { _version = "0.1.0" }
 log.usecolor = true
 log.showdate = true
 log.outfile = nil
-log.level = "trace"
+log.level = "Trace"
 log.fp = nil
 
 local modes = {
-  { name = "trace", color = "\27[34m", },
-  { name = "debug", color = "\27[36m", },
-  { name = "info",  color = "\27[32m", },
-  { name = "warn",  color = "\27[33m", },
-  { name = "error", color = "\27[31m", },
-  { name = "fatal", color = "\27[35m", },
+  { name = "Trace", color = "\27[34m", },
+  { name = "Debug", color = "\27[36m", },
+  { name = "Info",  color = "\27[32m", },
+  { name = "Warn",  color = "\27[33m", },
+  { name = "Error", color = "\27[31m", },
+  { name = "Fatal", color = "\27[35m", },
 }
 
 
@@ -95,7 +95,7 @@ end
 --@param usecolor  Is use color
 --@param showdate Is show date
 --@return log's object
-function log:new(file_name, usecolor, showdate)
+function log:New(file_name, usecolor, showdate)
 	local o = {}
 	setmetatable(o, self)
 	self.__index = self
@@ -112,7 +112,7 @@ function log:new(file_name, usecolor, showdate)
 end
 
 -- close
-function log:close()
+function log:Close()
 	if self.fp then
 		self.fp:close()
 	end
